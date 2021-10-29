@@ -75,12 +75,12 @@ namespace YoutubeDownloader
             {
                 DownloadProgressBar.Value = 0;
                 string nameorurl = items.SubItems[0].Text;
-                //string type = items.SubItems[1].Text;
-                //bool ismp3 = type == "Audio";
+                string type = items.SubItems[1].Text;
+                bool ismp3 = type == "Audio";
                 bool result = Uri.TryCreate(nameorurl, UriKind.Absolute, out Uri _);
                 if (result)
                 {
-                    await DownloadVideoWithLink(nameorurl, FolderPath.Text, mp3radioBtn.Checked); //Video url
+                    await DownloadVideoWithLink(nameorurl, FolderPath.Text, ismp3); //Video url
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace YoutubeDownloader
                     if (link == null || link.Equals("Error!")) continue;
                     try
                     {
-                        await DownloadVideoWithLink(link, FolderPath.Text, mp3radioBtn.Checked);
+                        await DownloadVideoWithLink(link, FolderPath.Text, ismp3);
                     }
                     catch
                     {
