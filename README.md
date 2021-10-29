@@ -1,5 +1,5 @@
 # YoutubeDownloader
-A simple application used for downloading highest quality youtube videos.
+A simple application used for downloading the highest quality youtube videos.
 ## Features
 
 - Download youtube video as MP3 or MP4
