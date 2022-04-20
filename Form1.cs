@@ -1,4 +1,4 @@
-﻿using MediaToolkit;
+using MediaToolkit;
 using MediaToolkit.Model;
 using Ookii.Dialogs.WinForms;
 using System;
@@ -33,7 +33,7 @@ namespace YoutubeDownloader
             if (File.Exists(Application.StartupPath + @"\path.txt"))
             {
                 var t = File.ReadAllText(Application.StartupPath + @"\path.txt");
-                if (Directory.Exists(FolderPath.Text))
+                if (Directory.Exists(t))
                     FolderPath.Text = t;
             }
         }
@@ -122,7 +122,8 @@ namespace YoutubeDownloader
                     Log("Error deleting " + s + "!");
                 }
             }
-            Log("Finished converting to mp3!");
+            if(listpath.Count > 0)
+                Log("Finished converting to mp3!");
         }
         //Algorithm to check if title closely matches the vid result
         public static int ComputeSimilarity(string s, string t)
@@ -225,12 +226,13 @@ namespace YoutubeDownloader
             var video = await youtube.Videos.GetAsync(url);
             var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Id);
             IStreamInfo streamInfo;
-            if (ismp3) streamInfo = (IAudioStreamInfo)streamManifest.GetAudioOnlyStreams().Where(s => s.Container == YoutubeExplode.Videos.Streams.Container.Mp4).GetWithHighestBitrate();
-            else streamInfo = (IVideoStreamInfo)streamManifest.GetVideoOnlyStreams().Where(s => s.Container == YoutubeExplode.Videos.Streams.Container.Mp4).GetWithHighestVideoQuality();
+            if (ismp3) streamInfo = (IAudioStreamInfo)streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+            else streamInfo = (IVideoStreamInfo)streamManifest.GetMuxedStreams().Where(s => s.Container == YoutubeExplode.Videos.Streams.Container.Mp4).GetWithHighestVideoQuality();
             if (streamInfo != null)
             {
                 string illegal = string.Join("_", video.Title.Split(Path.GetInvalidFileNameChars()));
-                listpath.Add(FolderDest + @"\" + illegal + Path.GetExtension($"video.{streamInfo.Container}"));
+                if(ismp3)
+                    listpath.Add(FolderDest + @"\" + illegal + Path.GetExtension($"video.{streamInfo.Container}"));
                 // Get the actual stream
                 var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
                 Log("Downloading " + video.Title.Replace("/", "").Replace(@"\", "") + "..." + "[" + itemsDownloaded.ToString() + "/" + MediaListView.Items.Count.ToString() + "]");
