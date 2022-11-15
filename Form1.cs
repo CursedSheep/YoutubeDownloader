@@ -226,7 +226,7 @@ namespace YoutubeDownloader
             var video = await youtube.Videos.GetAsync(url);
             var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Id);
             IStreamInfo streamInfo;
-            if (ismp3) streamInfo = (IAudioStreamInfo)streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+            if (ismp3) streamInfo = (IAudioStreamInfo)streamManifest.GetAudioStreams().GetWithHighestBitrate();
             else streamInfo = (IVideoStreamInfo)streamManifest.GetMuxedStreams().Where(s => s.Container == YoutubeExplode.Videos.Streams.Container.Mp4).GetWithHighestVideoQuality();
             if (streamInfo != null)
             {
